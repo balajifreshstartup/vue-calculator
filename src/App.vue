@@ -9,10 +9,10 @@
       <button v-on:click="adicionarOperador(numero)" v-for="numero, index in operacoes" :key="index">
         {{ numero }}
       </button>
-      <button @lick="handleCalculate">=</button>
-        <!-- <button>
-            Limpar
-        </button> -->
+      <button @click="handleEqualto">=</button>
+      <button v-on:click="handleClear">
+          Clear
+      </button>
     </div>
   </div>
 </template>
@@ -32,11 +32,24 @@ export default {
     }
   },
   methods:{
+    handleClear(){
+      this.operators = '',
+      this.expressao = '',
+      this.remainder = '',
+      this.answer = 0
+    },
+    handleEqualto(){
+      console.log('asdf ===')
+      if(this.remainder && this.expressao && this.operators){
+        this.answer = this.handleCalculate(this.remainder, this.expressao, this.operators)
+        this.remainder = this.remainder+' '+this.expressao
+        this.expressao = '';
+      }
+    },
     adicionarOperador(numero){
       if(OPERADORES_MATEMATICOS.indexOf(numero) !== -1){
-        if((this.operators == numero) && this.operators){
+        if(((this.operators == numero) && this.operators) && this.expressao){
           if(this.answer){
-            console.log('asdf1');
             this.answer = this.handleCalculate(this.answer, this.expressao, this.operators)
             this.remainder = this.answer+' '+this.operators+' '+this.expressao
           }else{
@@ -46,6 +59,16 @@ export default {
             this.expressao = '';
           }
           return
+        }else if(((this.operators == numero) && this.operators) && this.expressao == ''){
+          console.log('asdf_new');
+          this.remainder = this.answer+' '+this.operators;
+          this.answer = 0;
+        }else if((this.operators != numero && this.operators) && this.remainder){
+          if(OPERADORES_MATEMATICOS.indexOf(numero) !== -1){
+            this.operators = numero;
+          }
+          this.remainder = this.answer+' '+this.operators;
+          this.answer = 0
         }else{
           console.log('asdf3');
           this.operators = numero
@@ -58,13 +81,15 @@ export default {
           console.log('asdf5');
           if(this.answer){
             console.log('asdf6');
-            this.remainder = this.answer
+            // this.remainder = this.answer
+            this.remainder = '';
             this.expressao += numero
             this.operators = '';
+            this.answer = 0;
             return
           }else{
             console.log('asdf7');
-            this.expressao = '';
+            // this.expressao = '';
           }
         }
         this.expressao += numero
